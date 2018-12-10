@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-for (( i=0;i<10;i-- )); do
+printf "Descomente a primeira linha do pt_BR.UTF-8"
+sleep 5
+
+loadkeys br-abnt2
+	nano /etc/locale.gen
+	locale-gen
+	export LANG=pt_BR.UTF-8
+
+while [ i -eq 5 ]
+do
 	printf "****************************************"
 	printf "*1 -  Setando a interface de rede       *"
 	printf "*2 -  Particionando o Disco             *"
@@ -11,19 +20,18 @@ for (( i=0;i<10;i-- )); do
 	printf "****************************************"
 	read options
 
-	loadkeys br-abnt2
-	nano /etc/locale.gen
-	locale-gen
-	export LANG=pt_BR.UTF-8
-	ip link
+	
 	 
 
-	if [ $options == 1 ]; then 
+	if [ $options == 1 ]; then
+        
+        ip link
 		echo "digite sua interface de rede"
 		read rede
 		systemctl enable dhcpcd@$rede.service
 		systemctl start dhcpcd@$rede.service
-	fi
+	
+    fi
 	if [ $options == 2 ]; then 
 		cfdisk /dev/sda
 	fi
@@ -40,14 +48,17 @@ for (( i=0;i<10;i-- )); do
 		mkdir -p /mnt/home && mount /dev/sda3 /mnt/home
 	fi
 	if [ $options == 5 ]; then 
-		pacstrap /mnt base 
-		genfstab -U -p /mnt >> /mnt/etc/fstab
-		nano /mnt/etc/fstab
-	fi
+	
+        pacstrap /mnt base 
+		genfstab -U -p /mnt >> /mnt/etc/fstab 
+  		nano /mnt/etc/fstab
+	
+  	fi
   
 	if [ $options == 6 ]; then 
 		arch-chroot /mnt
-		for (( i=0;i<10;i-- )); do
+		while [ i -eq 5 ] 
+		do
 			printf "*****************************************"	
 			printf "*1 -  Setando o telcalod                *"
 			printf "*2 -  Escolhendo a Linguagem do sistema *"
@@ -99,6 +110,8 @@ for (( i=0;i<10;i-- )); do
 				reboot
 
 			fi
+			((i--))
 		done
 	fi
+	((i--))
 done
