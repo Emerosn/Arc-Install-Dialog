@@ -8,8 +8,8 @@ loadkeys br-abnt2
 	locale-gen
 	export LANG=pt_BR.UTF-8
 
-while [ i -eq 5 ]
-do
+while true; do
+
 	printf "****************************************"
 	printf "*1 -  Setando a interface de rede       *"
 	printf "*2 -  Particionando o Disco             *"
@@ -54,11 +54,11 @@ do
   		nano /mnt/etc/fstab
 	
   	fi
-  
+  done
 	if [ $options == 6 ]; then 
 		arch-chroot /mnt
-		while [ i -eq 5 ] 
-		do
+		while true;	do
+
 			printf "*****************************************"	
 			printf "*1 -  Setando o telcalod                *"
 			printf "*2 -  Escolhendo a Linguagem do sistema *"
@@ -110,8 +110,5 @@ do
 				reboot
 
 			fi
-			((i--))
-		done
 	fi
-	((i--))
-done
+done	
