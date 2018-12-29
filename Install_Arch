@@ -102,7 +102,7 @@ EOF
    10) _ATUALIZAR ;;		
    11) _BOOT ;;		
    12) _GRUB ;;
-   
+esac 
 done
 				exit
 				umount -R /mnt
