@@ -68,7 +68,7 @@ _GRUB(){
 
 loadkeys br-abnt2
 while true; do
-    cat << EOF
+cat << EOF
 	 *****************************************************************************
 	* 1 -  Setando a interface de rede 7 - Configurando Linguagem do systema      *
 	* 2 -  Particionando o Disco       8 - Escolhendo a Linguagem do sistema      *
@@ -94,8 +94,8 @@ while true; do
    10) _ATUALIZAR ;;		
    11) _BOOT ;;		
    12) _GRUB ;;
-   
+   esac
 done
-				exit
-				umount -R /mnt
-				reboot
+exit
+umount -R /mnt
+reboot
