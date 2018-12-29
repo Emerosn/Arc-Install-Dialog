@@ -1,114 +1,101 @@
 #!/usr/bin/env bash
-
-printf "Descomente a primeira linha do pt_BR.UTF-8"
-sleep 5
-
-loadkeys br-abnt2
-	nano /etc/locale.gen
-	locale-gen
-	export LANG=pt_BR.UTF-8
-
-while true; do
-
-	printf "****************************************"
-	printf "*1 -  Setando a interface de rede       *"
-	printf "*2 -  Particionando o Disco             *"
-	printf "*3 -  Formatando as partições           *"
-	printf "*4 -  Montando as partições             *"
-	printf "*5 -  Instalando o systema base         *"
-	printf "*6 -  Iniciando Arch-Chroot             *"
-	printf "****************************************"
-	read options
-
-	
-	 
-
-	if [ $options == 1 ]; then
-        
+_IPLINK(){
         ip link
 		echo "digite sua interface de rede"
 		read rede
 		systemctl enable dhcpcd@$rede.service
 		systemctl start dhcpcd@$rede.service
-	
-    fi
-	if [ $options == 2 ]; then 
-		cfdisk /dev/sda
-	fi
-	if [ $options == 3 ]; then 
-		mkfs.fat -F32 -n BOOT /dev/sda1
+}
+_HD(){
+        cfdisk /dev/sda
+}
+_FORMATE(){
+       	mkfs.fat -F32 -n BOOT /dev/sda1
 		mkfs.ext4 /dev/sda2
 		mkfs.ext4 /dev/sda3
 		mkswap /dev/sda4 && swapon /dev/sda4
-	fi
-
-	if [ $options == 4 ]; then 
-		mount /dev/sda2 /mnt
+}
+_MONT(){
+        mount /dev/sda2 /mnt
 		mkdir -p /mnt/boot && mount /dev/sda1 /mnt/boot
-		mkdir -p /mnt/home && mount /dev/sda3 /mnt/home
-	fi
-	if [ $options == 5 ]; then 
-	
+		mkdir -p /mnt/home && mount /dev/sda3 /mnt/home        
+}
+_SYSTEMBASE(){
         pacstrap /mnt base 
 		genfstab -U -p /mnt >> /mnt/etc/fstab 
   		nano /mnt/etc/fstab
-	
-  	fi
-  done
-	if [ $options == 6 ]; then 
-		arch-chroot /mnt
-		while true;	do
+}
+_CHROOT(){
+        arch-chroot /mnt && loadkeys br-abnt2
+}
+_LINGUATECLADO(){
+   		sed -i 's/#pt_BR.UTF-8/pt_BR.UTF-8/' /etc/locale.gen
+		echo LANG=pt_BR.UTF-8 > /etc/locale.conf
+		export LANG=pt_BR.UTF-8
+		printf "KEYMAP=br-abnt2 \nFONT=Terminus16 \nFONT MAP= " > /etc/vconsole.conf
+}
+_LINGUASYSTEMA(){
+        ls /usr/share/zoneinfo/America/
+		printf "digite o nome da cidade de sua preferencia"	
+		read cidade
+		ls /usr/share/zoneinfo/America/$cidade
+		hwclock --systohc --utc
+}
+_REDE(){
+        ifconfig
+        echo "digite sua interface de rede"
+		read rede 
+		systemctl enable dhcpcd@$rede.service
+		systemctl start dhcpcd@$rede.service
+}
+_ATUALIZAR(){
+        pacman -Suyy
+}
+_BOOT(){
+        bootctl install
+		rm -rf /boot/load/load.conf
+		 > /boot/load/load.conf
+		printf "timeout 2\ndefaut arch\ntitle Arch Linux\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=/dev/sda2 rw" \ 
+                > /boot/load/load.conf && cp /boot/load/load.conf \
+                /boot/load/entries/ && cd /boot/load/entries/ \
+                && mv load.conf arch.conf
+}
+_GRUB(){
+       	pacman -S grub efibootmgr
+		grup-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+		grub-mkconfig -o /boot/grub/grub.cfg
+}
 
-			printf "*****************************************"	
-			printf "*1 -  Setando o telcalod                *"
-			printf "*2 -  Escolhendo a Linguagem do sistema *"
-			printf "*3 -  Setando a interface de rede       *"
-			printf "*4 - Atualizando pacotes               *"
-			printf "*5 - configurando o boot do sistema    *"
-			printf "*6 - instalando e configurando o grub  *"
-			printf "*7 - Reboot no sistema                 *"
-			printf "*****************************************"
-		 	read options
-			if [ $options == 1 ]; then
+loadkeys br-abnt2
+while true; do
+    cat << EOF
+	 *****************************************************************************
+	* 1 -  Setando a interface de rede 7 - Configurando Linguagem do systema      *
+	* 2 -  Particionando o Disco       8 - Escolhendo a Linguagem do sistema      *
+	* 3 -  Formatando as partições     9 - Setando a interface de rede            *
+	* 4 -  Montando as partições      10 - Atualizando pacotes                    *
+	* 5 -  Instalando o systema base  11 - Configurando o boot do sistema         *
+	* 6 -  Iniciando Arch-Chroot      12 - Instalando e configurando o grub       *
+	 *****************************************************************************
+    EOF
+	read options
 
-				nano /etc/locale.gen
-				echo LANG=pt_BR.UTF-8 > /etc/locale.conf
-				export LANG=pt_BR.UTF-8
-				printf "KEYMAP=br-abnt2 \nFONT=Terminus16 \nFONT MAP= " > /etc/vconsole.conf
 
-			fi
-			if [ $options == 2 ]; then	
-				ls /usr/share/zoneinfo/America/
-				printf "digite o nome da cidade de sua preferencia"	
-				read cidade
-				ls /usr/share/zoneinfo/America/$cidade
-				hwclock --systohc --utc
-			fi
-			if [ $options == 3 ]; then
-				echo "digite sua interface de rede"
-				read rede 
-				systemctl enable dhcpcd@$rede.service
-				systemctl start dhcpcd@$rede.service
-			fi
-			if [ $options == 4 ]; then
-				pacman -Suyy 
-			fi
-			if [ $options == 5 ]; then
-				bootctl install
-				rm -rf /boot/load/load.conf
-				 > /boot/load/load.conf
-				printf "timeout 2\ndefaut arch\ntitle Arch Linux\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\noptions root=/dev/sda2 rw" > /boot/load/load.conf && cp /boot/load/load.conf /boot/load/entries/ && cd /boot/load/entries/ && mv load.conf arch.conf
-			if [ $options == 6 ]; then
-
-				pacman -S grub efibootmgr
-				grup-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
-				grub-mkconfig -o /boot/grub/grub.cfg
-				
-			if [ $options == 6 ]; then	
+    case $options in
+    1) _IPLINK break ;; 
+    2) _HD ;;
+    3) _FORMATE ;;
+    4) _MONT ;;    
+    5) _SYSTEMBASE ;; 
+    6) _CHROOT ;;
+    7) _LINGUATECLADO ;;		
+    8) _LINGUASYSTENA ;;
+    9) _REDE ;;  	
+   10) _ATUALIZAR ;;		
+   11) _BOOT ;;		
+   12) _GRUB ;;
+   
+done
 				exit
 				umount -R /mnt
 				reboot
-
-			fi
-	fi
-done	
