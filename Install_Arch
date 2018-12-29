@@ -29,20 +29,21 @@ _CHROOT(){
         arch-chroot /mnt && loadkeys br-abnt2
 }
 _LINGUATECLADO(){
-   		sed -i 's/#pt_BR.UTF-8/pt_BR.UTF-8/' /etc/locale.gen
+
+   		sed -i "s/#pt_BR.UTF-8/pt_BR.UTF-8/" /etc/locale.gen
 		echo LANG=pt_BR.UTF-8 > /etc/locale.conf
 		export LANG=pt_BR.UTF-8
 		printf "KEYMAP=br-abnt2 \nFONT=Terminus16 \nFONT MAP= " > /etc/vconsole.conf
 }
 _LINGUASYSTEMA(){
-        ls /usr/share/zoneinfo/America/
+        ln -sf /usr/share/zoneinfo/America/Bahia /etc/localtime
 		printf "digite o nome da cidade de sua preferencia"	
 		read cidade
 		ls /usr/share/zoneinfo/America/$cidade
 		hwclock --systohc --utc
 }
 _REDE(){
-        ifconfig
+
         echo "digite sua interface de rede"
 		read rede 
 		systemctl enable dhcpcd@$rede.service
@@ -61,6 +62,7 @@ _BOOT(){
                 && mv load.conf arch.conf
 }
 _GRUB(){
+
        	pacman -S grub efibootmgr
 		grup-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
 		grub-mkconfig -o /boot/grub/grub.cfg
@@ -77,7 +79,7 @@ cat << EOF
 	* 5 -  Instalando o systema base  11 - Configurando o boot do sistema         *
 	* 6 -  Iniciando Arch-Chroot      12 - Instalando e configurando o grub       *
 	 *****************************************************************************
-    EOF
+EOF
 	read options
 
 
@@ -89,13 +91,13 @@ cat << EOF
     5) _SYSTEMBASE ;; 
     6) _CHROOT ;;
     7) _LINGUATECLADO ;;		
-    8) _LINGUASYSTENA ;;
+    8) _LINGUASYSTEMA ;;
     9) _REDE ;;  	
    10) _ATUALIZAR ;;		
    11) _BOOT ;;		
    12) _GRUB ;;
-   esac
+   
 done
-exit
-umount -R /mnt
-reboot
+				exit
+				umount -R /mnt
+				reboot
