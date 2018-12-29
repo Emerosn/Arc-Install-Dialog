@@ -26,7 +26,13 @@ _SYSTEMBASE(){
   		nano /mnt/etc/fstab
 }
 _CHROOT(){
-        arch-chroot /mnt && loadkeys br-abnt2
+        arch-chroot /mnt 
+		loadkeys br-abnt2
+		pacman -Sy
+		pacman -S git && git clone https://notabug.org/masterorg/Arch.git
+		cd Arch/
+		chmod +x Install_Arch
+		./Install_Arch
 }
 _LINGUATECLADO(){
 
