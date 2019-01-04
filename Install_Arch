@@ -89,15 +89,16 @@ _ROOT(){
 loadkeys br-abnt2
 while true; do
 cat << EOF
-	 *****************************************************************************
-	* 1 -  Setando a interface de rede 7 - Configurando Linguagem do systema      *
-	* 2 -  Particionando o Disco       8 - Escolhendo a Linguagem do sistema      *
-	* 3 -  Formatando as partições     9 - Setando a interface de rede            *
-	* 4 -  Montando as partições      10 - Atualizando pacotes                    *
-	* 5 -  Instalando o systema base  11 - Configurando o boot do sistema         *
-	* 6 -  Iniciando Arch-Chroot      12 - Instalando e configurando o grub       *
-	*                                 13 - Senha de super usuario                 *
-     *****************************************************************************
+                 Parte 1                             Parte 2
+	 **********************************  *******************************************
+	* 1 -  Setando a interface de rede  *  7 - Configurando Linguagem do systema    *
+	* 2 -  Particionando o Disco        *  8 - Escolhendo a Linguagem do sistema    *
+	* 3 -  Formatando as partições      *  9 - Setando a interface de rede          *
+	* 4 -  Montando as partições        * 10 - Atualizando pacotes                  *
+	* 5 -  Instalando o systema base    * 11 - Configurando o boot do sistema       *
+	* 6 -  Iniciando Arch-Chroot        * 12 - Instalando e configurando o grub     *
+	* ********************************* * 13 - Senha de super usuario               *
+                                         *******************************************
 EOF
 	read options
 
